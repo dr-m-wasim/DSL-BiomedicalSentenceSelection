@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import pk.edu.kics.dsl.util.StringHelper;
 public class Jaccard extends SentenceSimilarity {
 
 	@Override
-	public Map<String, Double> getMostSimilarSentences(String question, ArrayList<String> sentences) {
+	public Map<String, Double> getMostSimilarSentences(String question, List<String> sentences) {
 
 		Map<String, Double> scoredSentences = new HashMap<String, Double>();
 

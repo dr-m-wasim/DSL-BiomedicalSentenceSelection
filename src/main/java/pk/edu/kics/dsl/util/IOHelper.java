@@ -11,6 +11,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import pk.edu.kics.dsl.entity.Question;
+import pk.edu.kics.dsl.entity.QuestionResult;
 
 public class IOHelper {
 	
@@ -35,6 +36,11 @@ public class IOHelper {
 		}
 		
 		return questions;
+	}
+
+	public static void writeResults(ArrayList<QuestionResult> results) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
