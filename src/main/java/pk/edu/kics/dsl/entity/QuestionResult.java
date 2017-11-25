@@ -1,5 +1,10 @@
 package pk.edu.kics.dsl.entity;
 
+import java.util.Arrays;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 public class QuestionResult {
 	private String body;
 	private String[] documents;
@@ -36,5 +41,26 @@ public class QuestionResult {
 	}
 	public void setSnippets(SnippetResult[] snippets) {
 		this.snippets = snippets;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON() {
+		
+		JSONObject questionResult = new JSONObject();
+		JSONArray documentsArray = new JSONArray();
+		JSONArray snippetsArray = new JSONArray();
+		documentsArray.addAll(Arrays.asList(documents));		
+		
+		for (SnippetResult snippetResult : snippets) {
+			snippetsArray.add(snippetResult.toJSON());
+		}
+		
+		questionResult.put("id", id);
+		questionResult.put("body", body);
+		questionResult.put("documents", documentsArray);
+		questionResult.put("type", type);
+		questionResult.put("snippets", snippetsArray);
+		
+		return questionResult;
 	}
 }

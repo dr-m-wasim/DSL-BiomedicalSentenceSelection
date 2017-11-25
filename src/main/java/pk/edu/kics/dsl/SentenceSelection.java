@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServerException;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import pk.edu.kics.dsl.entity.Question;
+import pk.edu.kics.dsl.entity.InputQuestion;
 import pk.edu.kics.dsl.entity.QuestionResult;
 import pk.edu.kics.dsl.entity.SnippetResult;
 import pk.edu.kics.dsl.entity.SolrResult;
+import pk.edu.kics.dsl.evaluation.EvaluatorTaskB;
 import pk.edu.kics.dsl.sm.SentenceSimilarity;
 import pk.edu.kics.dsl.util.IOHelper;
 import pk.edu.kics.dsl.util.SolrHelper;
@@ -23,30 +26,42 @@ import pk.edu.kics.dsl.util.StringHelper;
 public class SentenceSelection {
 
 	public static final String SENTENCE_MATCHING_TECHNIQUE = "Jaccard";
-	public static final int TOP_DOCUMENTS_TO_SELECT = 1;
-	public static final int TOP_SENTENCES_TO_SELECT = 10;
+	public static final int TOP_DOCUMENTS_TO_SELECT = 50;
+	public static final int TOP_SENTENCES_TO_SELECT = 1;
 	
-	static String[] questionBatches = { "resources/questions/BioASQ-task3bPhaseA-testset1" };
+	static String[] questionBatches = {"resources/questions/BioASQ-task3bPhaseA-testset1" };
 	public final static String SOLR_SERVER = "10.11.10.210";
-	public final static String SOLR_CORE = "medline";
+	public final static String SOLR_CORE = "medline-lm";
 	public final static String CONTENT_FIELD = "abstracttext";
-	public final static int TOTAL_DOCUMENTS = 26774856;
+	public final static int TOTAL_DOCUMENTS = 26759399;
+	
+	public final static String GOLDEN_FILE = "resources/gold/BioASQ-task3bPhaseB-testset1";
+	public final static String SYSTEM_GENERATED_FILE = "resources/result.txt";
 
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args)
 			throws FileNotFoundException, IOException, ParseException, SolrServerException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 
-		ArrayList<Question> questions = IOHelper.ReadQuestions(questionBatches);
-		ArrayList<QuestionResult> results = new ArrayList<>();
+		ArrayList<InputQuestion> questions = IOHelper.ReadQuestions(questionBatches);
 		
-		for (Question question : questions) {
-			results.add(processQuestion(question));
-			//IOHelper.writeResults(results);
+		JSONObject results = new JSONObject();
+		JSONArray questionResults = new JSONArray();
+		
+		int counter = 1;
+		for (InputQuestion question : questions) {
+			questionResults.add(processQuestion(question).toJSON());
+			System.out.println("Processed Question: " + counter++);
 		}
 
-		//Evaluation.evaluateResults();
+		results.put("questions", questionResults);
+		IOHelper.writeResults(SYSTEM_GENERATED_FILE, results.toJSONString());
+		
+		EvaluatorTaskB eval = new EvaluatorTaskB(GOLDEN_FILE, SYSTEM_GENERATED_FILE, EvaluatorTaskB.BIOASQ3);
+		eval.setVERSION_OF_CHALLENGE(EvaluatorTaskB.BIOASQ3);
+		eval.EvaluatePhaseA();
 	}
 
-	private static QuestionResult processQuestion(Question question) throws SolrServerException, IOException,
+	private static QuestionResult processQuestion(InputQuestion question) throws SolrServerException, IOException,
 			InstantiationException, IllegalAccessException, ClassNotFoundException {
 
 		SolrHelper solrHelper = new SolrHelper();
@@ -89,8 +104,8 @@ public class SentenceSelection {
 					SnippetResult snippetResult = new SnippetResult();
 					snippetResult.setBeginSection("title");
 					snippetResult.setEndSection("title");
-					snippetResult.setOffsetInBeginSection(abstractText.indexOf(key));
-					snippetResult.setOffsetInEndSection(abstractText.indexOf(key) + key.length());
+					snippetResult.setOffsetInBeginSection(0);
+					snippetResult.setOffsetInEndSection(key.length());
 					snippetResult.setText(key);
 					snippetResult.setScore(scoredSentences.get(key));
 					snippetResult.setDocument(solrResult.getPmid());
@@ -102,18 +117,18 @@ public class SentenceSelection {
 
 		ArrayList<SnippetResult> selectedSnippets = getTopSnippets(snippetsResult);
 		
-		System.out.println();
+		/*System.out.println();
 		System.out.println("Question: " + question.body);
 		
 		for (SnippetResult snippetResult : selectedSnippets) {
 			System.out.println(snippetResult.getText());
 			System.out.println(snippetResult.getScore());
-		}
+		}*/
 		
 		return getFinalResult(question, selectedSnippets, resultsList);
 	}
 
-	private static QuestionResult getFinalResult(Question question, ArrayList<SnippetResult> snippets, ArrayList<SolrResult> resultsList) {
+	private static QuestionResult getFinalResult(InputQuestion question, ArrayList<SnippetResult> snippets, ArrayList<SolrResult> resultsList) {
 		
 		QuestionResult questionResult = new QuestionResult();
 		String documents[] = new String[TOP_DOCUMENTS_TO_SELECT];

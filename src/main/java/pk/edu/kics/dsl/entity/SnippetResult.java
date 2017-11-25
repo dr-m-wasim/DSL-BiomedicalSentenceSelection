@@ -1,5 +1,7 @@
 package pk.edu.kics.dsl.entity;
 
+import org.json.simple.JSONObject;
+
 public class SnippetResult {
 	private int offsetInBeginSection;
 	private int offsetInEndSection;
@@ -50,5 +52,19 @@ public class SnippetResult {
 	}
 	public void setEndSection(String endSection) {
 		this.endSection = endSection;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public JSONObject toJSON() {
+		JSONObject obj = new JSONObject();
+		obj.put("offsetInBeginSection", offsetInBeginSection);
+		obj.put("offsetInEndSection", offsetInEndSection);
+		obj.put("text", text);
+		obj.put("beginSection", beginSection);
+		obj.put("document", document);
+		obj.put("endSection", endSection);
+		//obj.put("score", score);
+		
+		return obj;
 	}
 }

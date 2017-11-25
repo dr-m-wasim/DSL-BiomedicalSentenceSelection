@@ -31,14 +31,14 @@ public class SolrHelper {
 		solrQuery = new SolrQuery();
 	}
 
-	public ArrayList<SolrResult> submitQuery(Question question, int start, int rowNo)
+	public ArrayList<SolrResult> submitQuery(InputQuestion question, int start, int rowNo)
 			throws SolrServerException, IOException {
 
-		solrQuery.setQuery(question.body);
+		solrQuery.setQuery(StringHelper.formulateQuery(question.body));
 		solrQuery.setRequestHandler("/select");
 		solrQuery.setStart(start);
 		solrQuery.setRows(rowNo);
-		solrQuery.set("fl", "", "score", "pmid", SentenceSelection.CONTENT_FIELD);
+		solrQuery.set("fl", "", "score", "pmid", "abstracttext", "articletitle");
 
 		QueryResponse response = solr.query(solrQuery);
 		SolrDocumentList documentList = response.getResults();
