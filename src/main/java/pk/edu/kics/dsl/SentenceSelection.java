@@ -25,8 +25,8 @@ import pk.edu.kics.dsl.util.StringHelper;
 
 public class SentenceSelection {
 
-	public static final String SENTENCE_MATCHING_TECHNIQUE = "Jaccard";
-	public static final int TOP_DOCUMENTS_TO_SELECT = 50;
+	public static final String SENTENCE_MATCHING_TECHNIQUE = "Overlap";
+	public static final int TOP_DOCUMENTS_TO_SELECT = 10;
 	public static final int TOP_SENTENCES_TO_SELECT = 1;
 	
 	static String[] questionBatches = {"resources/questions/BioASQ-task3bPhaseA-testset1" };

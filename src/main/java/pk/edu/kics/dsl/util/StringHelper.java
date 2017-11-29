@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.en.KStemFilterFactory;
+import org.apache.lucene.analysis.en.PorterStemFilterFactory;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.AttributeFactory;
@@ -48,6 +50,9 @@ public class StringHelper {
 		LowerCaseFilterFactory lowerCaseFactory = new LowerCaseFilterFactory(param);
 		TokenStream tokenStream = lowerCaseFactory.create(tokenizer);
 
+		/*PorterStemFilterFactory kstemFilterFactory = new PorterStemFilterFactory(param);
+		tokenStream = kstemFilterFactory.create(tokenStream);*/
+		
 		while(tokenStream.incrementToken()) {
 			String term = attr.toString();
 			tokens.add(term);
@@ -68,7 +73,7 @@ public class StringHelper {
 			}
 		}
 		
-		//System.out.println(sb.toString());
+		System.out.println(sb.toString());
 		
 		return sb.toString();
 	}

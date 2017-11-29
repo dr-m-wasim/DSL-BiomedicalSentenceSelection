@@ -25,7 +25,5 @@ public class OverlapTest {
 		for (String key : result.keySet()) {
 			assertEquals(expectedResults[counter++], result.get(key), 0.09); 
 		}
-
 	}
-
 }
