@@ -81,7 +81,7 @@ public class SolrHelper {
 		JSONParser parser = new JSONParser();
 
 		JSONObject termsObject = (JSONObject) parser.parse(response);
-		JSONObject body = (JSONObject) termsObject.get(SentenceSelection.CONTENT_FIELD);
+		JSONObject body = (JSONObject)((JSONObject) termsObject.get("terms")).get(SentenceSelection.CONTENT_FIELD);
 
 		return getTTFDFDictionary(body);
 	}
