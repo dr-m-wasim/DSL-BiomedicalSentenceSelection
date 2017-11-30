@@ -15,7 +15,7 @@ import pk.edu.kics.dsl.SentenceSelection;
 import pk.edu.kics.dsl.util.SolrHelper;
 import pk.edu.kics.dsl.util.StringHelper;
 
-public class TermFrequency extends SentenceSimilarity {
+public class RelativeFrequency extends SentenceSimilarity {
 
 	@Override
 	public Map<String, Double> getMostSimilarSentences(String question, List<String> sentences) {
@@ -29,7 +29,7 @@ public class TermFrequency extends SentenceSimilarity {
 				ArrayList<String> stokens = StringHelper.solrTokenizer(sentence);
 
 				try {
-					scoredSentences.put(sentence, getTermFrequencyScore(qtokens, stokens));
+					scoredSentences.put(sentence, getRelativeFrequencyScore(qtokens, stokens));
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -42,12 +42,12 @@ public class TermFrequency extends SentenceSimilarity {
 		return scoredSentences;
 	}
 
-	public double getTermFrequencyScore(ArrayList<String> questionTokens, ArrayList<String> sentenceTokens)
+	public double getRelativeFrequencyScore(ArrayList<String> questionTokens, ArrayList<String> sentenceTokens)
 			throws IOException, ParseException {
 
 		Set<String> intersection = new HashSet<String>(questionTokens);
 		intersection.retainAll(sentenceTokens);
-		double TF_IDF = 0.0;
+		double RF = 0.0;
 		SolrHelper solrHelper = new SolrHelper();
 		if (intersection.size() == 0)
 			return 0;
@@ -82,14 +82,14 @@ public class TermFrequency extends SentenceSimilarity {
 				}
 			}
 
-			TF_IDF = TF_IDF + Math.log10(questionTermFreq + 1) * Math.log10(sentenceTermFreq + 1)
-					* Math.log10((double) (SentenceSelection.TOTAL_DOCUMENTS + 1) / (df + 0.5));
+			RF = RF + (Math.log10((double) SentenceSelection.TOTAL_DOCUMENTS / df))
+					/ (1 + Math.abs(questionTermFreq - sentenceTermFreq));
 
 			it.remove();
 		}
 
-		return (float) TF_IDF;
+		return (1 / (double) (1 + ((Math.max(questionTokens.size(), sentenceTokens.size())
+				/ (double) (Math.min(questionTokens.size(), sentenceTokens.size())))))) * RF;
 
 	}
-
 }
