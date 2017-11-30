@@ -14,12 +14,12 @@ public class TermFrequencyTest {
 	public void testGetMostSimilarSentences() {
 		TermFrequency tf = new TermFrequency();
 		ArrayList<String> s = new ArrayList<>();
-		s.add("Muenke syndrome is characterized by coronal craniosynostosis (bilateral more often than unilateral), hearing loss, developmental delay, and carpal and/or tarsal bone coalition.");
+		s.add(" is characterized by coronal craniosynostosis (bilateral more often than unilateral), hearing loss, developmental delay, and carpal and/or tarsal bone coalition.");
 		s.add("Muenke syndrome caused by the FGFR3 Pro250Arg mutation is associated with craniosynostosis, hearing loss, and various bony anomalies");
 		s.add("\"Muenke syndrome caused by the FGFR3(P250R) mutation is an autosomal dominant disorder mostly identified with coronal suture synostosis");
 
 		Map<String, Double> result = tf.getMostSimilarSentences("What symptoms characterize the Muenke syndrome?", s);
-		double[] expectedResults = { 0.683, 0.7039, 0.7039 };
+		double[] expectedResults = { 0, 0.7039, 0.7039 };
 
 		int counter = 0;
 		for (String key : result.keySet()) {

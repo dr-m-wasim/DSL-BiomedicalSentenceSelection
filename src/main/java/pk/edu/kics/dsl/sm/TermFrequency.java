@@ -49,7 +49,8 @@ public class TermFrequency extends SentenceSimilarity {
 		intersection.retainAll(sentenceTokens);
 		double TF_IDF = 0.0;
 		SolrHelper solrHelper = new SolrHelper();
-
+		if (intersection.size() == 0)
+			return 0;
 		String terms = "";
 
 		for (String term : intersection) {
@@ -62,10 +63,7 @@ public class TermFrequency extends SentenceSimilarity {
 
 		Set<String> keyset = documentFrequency.keySet();
 		Iterator it = keyset.iterator();
-		
-		
-		
-		
+
 		while (it.hasNext()) {
 
 			String Key = (String) it.next();
