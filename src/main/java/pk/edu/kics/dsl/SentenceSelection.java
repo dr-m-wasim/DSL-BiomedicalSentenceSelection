@@ -25,17 +25,17 @@ import pk.edu.kics.dsl.util.StringHelper;
 
 public class SentenceSelection {
 
-	public static final String SENTENCE_MATCHING_TECHNIQUE = "Overlap";
+	public static final String SENTENCE_MATCHING_TECHNIQUE = "TermFrequency";
 	public static final int TOP_DOCUMENTS_TO_SELECT = 10;
-	public static final int TOP_SENTENCES_TO_SELECT = 1;
+	public static final int TOP_SENTENCES_TO_SELECT = 10;
 	
-	static String[] questionBatches = {"resources/questions/BioASQ-task3bPhaseA-testset1" };
+	static String[] questionBatches = {"resources/questions/BioASQ-task3bPhaseA-testset2" };
 	public final static String SOLR_SERVER = "10.11.10.210";
 	public final static String SOLR_CORE = "medline-lm";
-	public final static String CONTENT_FIELD = "abstracttext";
+	public final static String CONTENT_FIELD = "_text_";
 	public final static int TOTAL_DOCUMENTS = 26759399;
 	
-	public final static String GOLDEN_FILE = "resources/gold/BioASQ-task3bPhaseB-testset1";
+	public final static String GOLDEN_FILE = "resources/gold/BioASQ-task3bPhaseB-testset2";
 	public final static String SYSTEM_GENERATED_FILE = "resources/result.txt";
 
 	@SuppressWarnings("unchecked")
@@ -51,6 +51,7 @@ public class SentenceSelection {
 		for (InputQuestion question : questions) {
 			questionResults.add(processQuestion(question).toJSON());
 			System.out.println("Processed Question: " + counter++);
+			
 		}
 
 		results.put("questions", questionResults);
@@ -131,7 +132,10 @@ public class SentenceSelection {
 	private static QuestionResult getFinalResult(InputQuestion question, ArrayList<SnippetResult> snippets, ArrayList<SolrResult> resultsList) {
 		
 		QuestionResult questionResult = new QuestionResult();
-		String documents[] = new String[TOP_DOCUMENTS_TO_SELECT];
+		int documentsToSelect = TOP_DOCUMENTS_TO_SELECT;
+		if(resultsList.size()<documentsToSelect) documentsToSelect = resultsList.size();
+		
+		String documents[] = new String[documentsToSelect];
 		
 		for (int i = 0; i < resultsList.size(); i++) {
 			SolrResult result = resultsList.get(i);

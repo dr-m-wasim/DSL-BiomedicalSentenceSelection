@@ -67,8 +67,15 @@ public class Overlap extends SentenceSimilarity {
 		while (it.hasNext())
 		{
 			String key = (String) it.next();
-			Integer df = (Integer) documentFrequency.get(key);
-
+			Integer df = SentenceSelection.TOTAL_DOCUMENTS; 
+			
+			
+			if(documentFrequency.containsKey(key)){
+				df = (Integer) documentFrequency.get(key); 
+			} else {
+				System.out.println(key);
+			}
+			
 			double idfValue = (double) SentenceSelection.TOTAL_DOCUMENTS / df;
 			double idf = Math.log10(idfValue);
 			IDFSum = IDFSum + idf;

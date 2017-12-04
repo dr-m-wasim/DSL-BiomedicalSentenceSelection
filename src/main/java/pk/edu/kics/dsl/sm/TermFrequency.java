@@ -83,7 +83,7 @@ public class TermFrequency extends SentenceSimilarity {
 			}
 
 			TF_IDF = TF_IDF + Math.log10(questionTermFreq + 1) * Math.log10(sentenceTermFreq + 1)
-					* Math.log10((double) (SentenceSelection.TOTAL_DOCUMENTS + 1) / (df + 0.5));
+					* Math.log10((double) (SentenceSelection.TOTAL_DOCUMENTS + 1) / (df+ 0.5));
 
 			it.remove();
 		}
